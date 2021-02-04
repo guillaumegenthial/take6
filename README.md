@@ -1,6 +1,8 @@
-# Take 6
+# Take 6 / 6 Nimmt
 
-A simple python implementation of [Take 6!](https://en.wikipedia.org/wiki/6_Nimmt!)
+A simple python implementation of [Take 6! / 6Nimmt](https://en.wikipedia.org/wiki/6_Nimmt!)
+
+![Take 6! / 6 Nimmt](take6.png)
 
 ## Install
 
