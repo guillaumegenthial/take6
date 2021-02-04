@@ -41,10 +41,6 @@ class Table:
     def __str__(self) -> str:
         return tabulate({f"Stack {idx}": self.stacks[idx] for idx in range(len(self.stacks))})
 
-    @property
-    def heads(self) -> List[Card]:
-        return [stack[-1] for stack in self.stacks]
-
     def get_insert_stack_idx(self, card: Card) -> Optional[int]:
         """Get stack index of insertion."""
         best_idx, best_diff = None, None
@@ -54,7 +50,7 @@ class Table:
                 best_idx, best_diff = idx, diff
         return best_idx
 
-    def get_lowest_stack_idx(self) -> int:
+    def get_best_stack_idx(self) -> int:
         """Get stack index with lowest number of points."""
         best_idx, best_points = None, None
         for idx, stack in enumerate(self.stacks):
@@ -68,7 +64,7 @@ class Table:
         # Find insertion stack (closest or lowest number of points)
         insert_stack_idx = self.get_insert_stack_idx(card)
         if insert_stack_idx is None:
-            insert_stack_idx = self.get_lowest_stack_idx()
+            insert_stack_idx = self.get_best_stack_idx()
         stack = self.stacks[insert_stack_idx]
 
         # Add or empty insert stack
