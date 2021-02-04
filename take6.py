@@ -94,6 +94,15 @@ class Player:
 
 
 @dataclass
+class RandomPlayer(Player):
+    """Random Player."""
+
+    def play(self, table: Table):
+        """Make one move."""
+        return self.cards.pop(random.randint(0, len(self.cards) - 1))
+
+
+@dataclass
 class BaselinePlayer(Player):
     """Baseline Player. Plays the lowest possible card."""
 
