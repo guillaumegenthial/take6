@@ -31,8 +31,8 @@ class Card:
         return f"Card({self.value}, {'*' * self.points})"
 
 
-class Table:
-    """Table."""
+class Board:
+    """Board."""
 
     def __init__(self, cards: List[Card], max_len: int = 5):
         self.stacks: List[List[Card]] = [[card] for card in sorted(cards, key=lambda card: card.value)]
@@ -59,7 +59,7 @@ class Table:
                 best_idx, best_points = idx, points
         return best_idx
 
-    def add(self, card: Card) -> int:
+    def step(self, card: Card) -> int:
         """Add card and return points lost."""
         # Find insertion stack (closest or lowest number of points)
         insert_stack_idx = self.get_insert_stack_idx(card)
@@ -89,29 +89,27 @@ class Player:
     def __post_init__(self):
         self.cards = sorted(self.cards, key=lambda card: card.value)
 
-    def play(self, table: Table):
+    def play(self, board: Board):
         raise NotImplementedError()
 
 
-@dataclass
 class RandomPlayer(Player):
     """Random Player."""
 
-    def play(self, table: Table):
+    def play(self, board: Board):
         """Make one move."""
         return self.cards.pop(random.randint(0, len(self.cards) - 1))
 
 
-@dataclass
 class BaselinePlayer(Player):
     """Baseline Player. Plays the lowest possible card."""
 
-    def play(self, table: Table):
+    def play(self, board: Board):
         """Make one move."""
         best_idx = 0
         for idx, card in enumerate(self.cards):
-            insert_stack_idx = table.get_insert_stack_idx(card)
-            if insert_stack_idx is None or len(table.stacks[insert_stack_idx]) >= table.max_len:
+            insert_stack_idx = board.get_insert_stack_idx(card)
+            if insert_stack_idx is None or len(board.stacks[insert_stack_idx]) >= board.max_len:
                 continue
             best_idx = idx
             break
@@ -121,10 +119,10 @@ class BaselinePlayer(Player):
 class InteractivePlayer(Player):
     """Interactive Player."""
 
-    def play(self, table: Table):
+    def play(self, board: Board):
         """Make one move."""
-        print("Table:")
-        print(table)
+        print("Board:")
+        print(board)
         print("My cards:")
         for idx, card in enumerate(self.cards):
             print(f"- {idx}: {card}")
@@ -148,7 +146,7 @@ def main(name: str = "Me", num_players: int = 3):
         # Initialize the game
         deck = [Card(idx + 1) for idx in range(104)]
         random.shuffle(deck)
-        table = Table([deck.pop() for _ in range(4)])
+        board = Board([deck.pop() for _ in range(4)])
         players = [
             BaselinePlayer(name=f"Player {idx}", cards=[deck.pop() for _ in range(10)])
             for idx in range(num_players - 1)
@@ -158,11 +156,11 @@ def main(name: str = "Me", num_players: int = 3):
         # Play the 10 rounds
         for _ in range(10):
             print("=" * 80)
-            cards = [player.play(table) for player in players]
+            cards = [player.play(board) for player in players]
             for card, player in sorted(zip(cards, players), key=lambda it: it[0].value):
                 print(f"- {player.name} plays {card}")
-                player.points += table.add(card)
-                print(table)
+                player.points += board.step(card)
+                print(board)
             print("=" * 80)
             print("Points:")
             for player in players:
