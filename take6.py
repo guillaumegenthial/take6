@@ -6,18 +6,20 @@ import random
 import fire
 
 from classes import Card, Board
-from players import BaselinePlayer, InteractivePlayer
+from players import BaselinePlayer, InteractivePlayer, ClosestCardPlayer
+
+from conf import NUM_CARDS
 
 def main(name: str = "Me", num_players: int = 3):
     """Launch a new game."""
     play = "y"
     while play == "y":
         # Initialize the game
-        deck = [Card(idx + 1) for idx in range(104)]
+        deck = [Card(idx + 1) for idx in range(NUM_CARDS)]
         random.shuffle(deck)
         board = Board([deck.pop() for _ in range(4)])
         players = [
-            BaselinePlayer(name=f"Player {idx}", cards=[deck.pop() for _ in range(10)])
+            ClosestCardPlayer(name=f"Player {idx}", cards=[deck.pop() for _ in range(10)])
             for idx in range(num_players - 1)
         ]
         players.append(InteractivePlayer(name=name, cards=[deck.pop() for _ in range(10)]))

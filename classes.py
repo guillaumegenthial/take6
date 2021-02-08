@@ -46,6 +46,15 @@ class Board:
                 best_idx, best_diff = idx, diff
         return best_idx
 
+    def get_distance_to_closest_stack(self, card: Card) -> Optional[int]:
+        """Get the distance to the closest stack below card value"""
+        best_idx, best_diff = None, None
+        for idx, stack in enumerate(self.stacks):
+            diff = card.value - stack[-1].value
+            if diff > 0 and (best_diff is None or diff < best_diff):
+                best_idx, best_diff = idx, diff
+        return best_diff
+
     def get_best_stack_idx(self) -> int:
         """Get stack index with lowest number of points."""
         best_idx, best_points = None, None

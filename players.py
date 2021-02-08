@@ -3,6 +3,9 @@ from typing import List
 import random
 
 from classes import Card, Board
+from conf import NUM_CARDS
+
+max_distance = NUM_CARDS
 
 @dataclass
 class Player:
@@ -41,6 +44,24 @@ class BaselinePlayer(Player):
             break
         return self.cards.pop(best_idx)
 
+class ClosestCardPlayer(Player):
+    """ClosestCardPlayer. Plays the card that is the closest to any of the stacks"""
+
+    def play(self, board: Board):
+        """Make one move."""
+        best_idx = 0
+        best_distance = max_distance
+        for idx, card in enumerate(self.cards):
+            insert_stack_idx = board.get_insert_stack_idx(card)
+            insert_stack_distance = board.get_distance_to_closest_stack(card)
+            if insert_stack_idx is None\
+            or len(board.stacks[insert_stack_idx]) >= board.max_len\
+            or insert_stack_distance > best_distance:
+                continue
+            else:
+                best_idx = idx
+                best_distance = insert_stack_distance
+        return self.cards.pop(best_idx)
 
 class InteractivePlayer(Player):
     """Interactive Player."""
